@@ -1,5 +1,7 @@
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -49,30 +51,37 @@ public class Gui extends AbstractApplication implements IApplication {
     @Override
     public void setup() {
         logger.error("Calling Setup on " + name);
+        try {
         setupUI();
+        } catch ( SWTException e ) {
+            logger.error(e);
+            logger.info("Please add -XstartOnFirstThread to your configuration(run)");
+        }
     }
 
     private void setupUI() {
         display = new Display ();
         shell = new Shell(display);
+        shell.setSize(800,600);
+        shell.setText(name);
         messages= new Text(shell, SWT.BORDER |
                 SWT.H_SCROLL | SWT.V_SCROLL | SWT.WRAP);
-        messages.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL));
+        messages.setSize(700,600);
+//        messages.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL));
 
         messages.setText(textbuffer);
         messages.pack();
 
-        layout = new GridLayout();
+        layout = new FillLayout();
         shell.setLayout(layout);
-        shell.setSize(800,600);
-
         shell.pack();
-        shell.open ();
+        shell.open();
         logger.trace("Entering application.");
     }
 
     public void start() {
         logger.error("Enter UI Main Loop");
+
 
         while (!shell.isDisposed ()) {
             if (!display.readAndDispatch ()) display.sleep ();
