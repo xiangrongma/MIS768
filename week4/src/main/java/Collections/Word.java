@@ -7,11 +7,12 @@ import java.util.stream.Stream;
 import static Collections.Alphabetas.*;
 
 public class Word {
-    List<Alphabetas> value;  // immutable after construction
+    final List<Alphabetas> value;  // immutable after construction
 
     Word(Alphabetas[] value) {
         this.value = Arrays.asList(value);
     }
+
     public static Word fromString(CharSequence word) {
         Alphabetas[] value = new Alphabetas[word.length()];
         for (int i = 0; i < value.length; i++) {
@@ -21,11 +22,11 @@ public class Word {
     }
     @Override
     public String toString() {
-
-        return this.value
+        return  this.value
                 .stream()
-                .map( a -> a.toString() )
-                .reduce(String::concat).get();
+                .map(Enum::toString)
+                .reduce(String::concat)
+                .orElse("");
     }
 
 }

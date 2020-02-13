@@ -1,15 +1,16 @@
+package App;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public abstract class AbstractApplication implements IApplication{
     private static final Logger logger = LogManager.getLogger(Gui.class);
-    private static final String name = "Application";
+    private static final String name = "App.Application";
 
-    final void run() {
+    public final void run() {
         setup();
-        logger.error("Running Application " + this.getName() );
+        logger.error("Running App.Application " + this.getName() );
         start();
     }
 
-    public abstract void updateMessage(String newText);
 }
