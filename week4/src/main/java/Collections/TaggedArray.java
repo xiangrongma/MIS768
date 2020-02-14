@@ -4,10 +4,10 @@ import java.util.Spliterator;
 import java.util.concurrent.ForkJoinPool;
 import java.util.function.Consumer;
 
-class TaggedArray<T>  {
+public class TaggedArray<T>  {
     private final Object[] elements; // immutable after construction
 
-    TaggedArray(T[] data, Object[] tags) {
+    public TaggedArray(T[] data, Object[] tags) {
         int size = data.length;
         if (tags.length != size) throw new IllegalArgumentException();
         this.elements = new Object[2 * size];
