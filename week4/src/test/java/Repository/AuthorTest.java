@@ -8,6 +8,7 @@ class AuthorTest {
     @Test
     void testToString() {
         Author shakespeare = new Author("Shakespeare","William");
-        assertEquals("Shakespeare William",shakespeare.toString());
+        assertEquals("Author{firstName='Shakespeare', lastName='William', midName='null', title='null'}",
+                shakespeare.toString());
     }
 }

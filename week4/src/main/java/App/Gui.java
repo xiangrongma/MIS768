@@ -14,6 +14,7 @@ import org.eclipse.swt.widgets.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Gui extends AbstractApplication implements IApplication {
     private static final Logger logger = LogManager.getLogger(Gui.class);
@@ -23,8 +24,8 @@ public class Gui extends AbstractApplication implements IApplication {
     private static String clickUrl;
     private static Text messages;
     private static Table table;
-    private static boolean dataBecomeReady = false;
-    private static boolean needUpdate = false;
+    private static AtomicBoolean dataBecomeReady = new AtomicBoolean(false);
+    private static AtomicBoolean needUpdate = new AtomicBoolean(false);
     private static List<Book> bookList = new ArrayList<>();
 
     public static String getTextbuffer() {
@@ -37,10 +38,6 @@ public class Gui extends AbstractApplication implements IApplication {
 
     private static String textbuffer = "Hello";
 
-    @Override
-    protected void finalize() throws Throwable {
-        super.finalize();
-    }
 
     @Override
     public void setName(String name) {
@@ -54,12 +51,12 @@ public class Gui extends AbstractApplication implements IApplication {
 
     @Override
     public void setup() {
-        logger.error("Calling Setup on " + name);
+        logger.info("Calling Setup on " + name);
         try {
         setupUI();
         } catch ( SWTException e ) {
             logger.error(e);
-            logger.info("Please add -XstartOnFirstThread to your configuration(run)");
+            logger.error("Please add -XstartOnFirstThread to your configuration(run)");
         }
     }
 
@@ -117,28 +114,24 @@ public class Gui extends AbstractApplication implements IApplication {
                 clickUrl = "http://www.gutenberg.org/ebooks/"+ selection[0].getText();
             }
         });
-        table.addListener(SWT.Resize, new Listener() {
-
-            @Override
-            public void handleEvent(Event event) {
-                Table table = (Table)event.widget;
-                int columnCount = table.getColumnCount();
-                if(columnCount == 0)
-                    return;
-                Rectangle area = table.getClientArea();
-                int totalAreaWdith = area.width;
-                int lineWidth = table.getGridLineWidth();
-                int totalGridLineWidth = (columnCount-1)*lineWidth;
-                int totalColumnWidth = 0;
-                for(TableColumn column: table.getColumns())
-                {
-                    totalColumnWidth = totalColumnWidth+column.getWidth();
-                }
-                int diff = totalAreaWdith-(totalColumnWidth+totalGridLineWidth);
-                TableColumn lastCol = table.getColumns()[columnCount-1];
-                lastCol.setWidth(diff+lastCol.getWidth());
-
+        table.addListener(SWT.Resize, event -> {
+            Table table = (Table)event.widget;
+            int columnCount = table.getColumnCount();
+            if(columnCount == 0)
+                return;
+            Rectangle area = table.getClientArea();
+            int totalAreaWdith = area.width;
+            int lineWidth = table.getGridLineWidth();
+            int totalGridLineWidth = (columnCount-1)*lineWidth;
+            int totalColumnWidth = 0;
+            for(TableColumn column: table.getColumns())
+            {
+                totalColumnWidth = totalColumnWidth+column.getWidth();
             }
+            int diff = totalAreaWdith-(totalColumnWidth+totalGridLineWidth);
+            TableColumn lastCol = table.getColumns()[columnCount-1];
+            lastCol.setWidth(diff+lastCol.getWidth());
+
         });
         table.pack();
         GridLayout layout = new GridLayout();
@@ -146,22 +139,21 @@ public class Gui extends AbstractApplication implements IApplication {
         layout.numColumns = 1;
 
 
-
         shell.setLayout(layout);
         shell.pack();
         shell.open();
-        logger.trace("Entering application.");
+        logger.info("Entering application.");
     }
 
     public void start() {
-        logger.error("Enter UI Main Loop");
+        logger.info("Enter UI Main Loop");
 
 
         while (!shell.isDisposed ()) {
             if (!display.readAndDispatch ()) display.sleep ();
 
-            if (dataBecomeReady && needUpdate){
-                needUpdate = false;
+            if (dataBecomeReady.get() && needUpdate.get()){
+                needUpdate.set(false);
                 table.setItemCount( bookList.size() );
                 table.setRedraw(true);
                 setTextbuffer(textbuffer + "\nDone!");
@@ -175,20 +167,19 @@ public class Gui extends AbstractApplication implements IApplication {
 
     @Override
     public void stop() {
-        logger.error("Exiting App.Application");
+        logger.info("Exiting App.Application");
     }
-
 
     @Override
     public synchronized void updateMessage(List<Book> data) {
-        dataBecomeReady = true;
-        needUpdate = true;
+        dataBecomeReady.set(true);
+        needUpdate.set(true);
         bookList = data;
         setTextbuffer(textbuffer + "Loading data to table");
 
     }
     static void populateItem(TableItem item) {
-        if(dataBecomeReady) {
+        if(dataBecomeReady.get()) {
             int idx = table.indexOf(item);
             if (bookList.size() > idx) {
                 Book book = bookList.get(idx);
