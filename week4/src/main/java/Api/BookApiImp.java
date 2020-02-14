@@ -36,7 +36,7 @@ public class BookApiImp implements BookApi {
     String[] nameparts = parts[1].split("[ \\t\\s]+");
 
     StringBuilder authorBuilder = new StringBuilder();
-    Integer bookid = 9999;
+    int bookid = 9999;
     for (int i = 0; i < nameparts.length - 1; i++) {
       authorBuilder.append(" ").append(nameparts[i].trim());
     }
@@ -44,7 +44,7 @@ public class BookApiImp implements BookApi {
       if (nameparts.length > 1) {
         bookid = Integer.parseInt(nameparts[nameparts.length - 1]);
       }
-    } catch (NumberFormatException e) {
+    } catch (NumberFormatException ignored) {
     }
 
     Book b = new Book();
@@ -83,7 +83,7 @@ public class BookApiImp implements BookApi {
   @Override
   public void downloadBooks() {
     List<String> urls = genDownloadList();
-    String path = "/Users/mark/IdeaProjects/MIS768/ebooks/";
+    String path = "/Users/mark/Projects/MIS768/week4";
     List<String> fileNames =
         urls.stream()
             .map(
@@ -116,7 +116,6 @@ public class BookApiImp implements BookApi {
             logger.info("saved at " + filename);
             success1.getAndIncrement();
             remaining.getAndDecrement();
-            //            return "Success1";
           } catch (FileNotFoundException e) {
             // retry "-0.zip"
             try {
@@ -132,16 +131,12 @@ public class BookApiImp implements BookApi {
               logger.error(e1);
               success2.getAndIncrement();
               remaining.getAndDecrement();
-              //              return e.toString();
             }
-            //            return "Success2";
           } catch (IOException e) {
             logger.error(e);
             failed.getAndIncrement();
             remaining.getAndDecrement();
-            //            return e.toString();
           }
-
             logger.error("total : " + total +
                     "\tRemaining" + remaining +
                     "\tSuccess (.zip): " + success1 +
@@ -154,7 +149,7 @@ public class BookApiImp implements BookApi {
   public List<Book> getBooks() {
 
     //        String response =  getFileFromUrl(INDEX_ROOT);
-    String content = getFileFromFS("/Users/mark/IdeaProjects/MIS768/week4/GUTINDEX.ALL");
+    String content = getFileFromFS("/Users/mark/Projects/MIS768/week4/GUTINDEX.ALL");
     List<Book> books;
     String header =
         "TITLE and AUTHOR                                                     EBOOK NO.";
@@ -205,7 +200,7 @@ public class BookApiImp implements BookApi {
       String line = "";
       while ((line = rd.readLine()) != null) {
 
-        sb.append(line + "\n");
+        sb.append(line).append("\n");
       }
       logger.error(sb.toString());
     } catch (IOException e) {

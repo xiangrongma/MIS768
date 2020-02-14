@@ -1,5 +1,7 @@
 package App;
 
+import Api.BookApi;
+import Api.BookApiImp;
 import Repository.Book;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,7 +19,7 @@ public class Cli extends AbstractApplication  {
 
     @Override
     public void setName(String name) {
-        this.name = name;
+        Cli.name = name;
     }
 
     @Override
@@ -25,11 +27,6 @@ public class Cli extends AbstractApplication  {
         return name;
     }
 
-    @Override
-    protected void finalize() throws Throwable {
-        stop();
-        super.finalize();
-    }
 
     @Override
     public void setup() {
@@ -64,11 +61,11 @@ public class Cli extends AbstractApplication  {
 
     public String eval(String cmd) {
         StringBuilder ret = new StringBuilder();
-        final String[] avilibaleCommands = {"list", "get", "save", "help"};
+        final String[] availableCommands = {"list", "get", "save", "help"};
         int cmdIndex;
         // match
-        for( cmdIndex = 0; cmdIndex < avilibaleCommands.length; cmdIndex++)
-            if(cmd.contains(avilibaleCommands[cmdIndex])) break;
+        for( cmdIndex = 0; cmdIndex < availableCommands.length; cmdIndex++)
+            if(cmd.contains(availableCommands[cmdIndex])) break;
 
         switch (cmdIndex) {
             // list
@@ -79,7 +76,7 @@ public class Cli extends AbstractApplication  {
                         .limit(10)
                         .map(b -> ret.append(b).append("\n"))
                         .count();
-                ret.append("displaying first " + count +" Books");
+                ret.append("displaying first ").append(count).append(" Books");
                 break;
 
             }
@@ -90,12 +87,12 @@ public class Cli extends AbstractApplication  {
                     ret.append("Usage: get keyword ").append(args);
                 } else {
                     String bookId = args[1];
-                    ret.append("Looking up book " + bookId);
+                    ret.append("Looking up book matching ").append(bookId).append("...");
                     long count = bookList.stream()
                             .filter(b -> ("" + b.Id).contains(bookId))
                             .map(b -> ret.append(b).append("\n"))
                             .count();
-                    ret.append("Found " + count +" Books");
+                    ret.append("Found ").append(count).append(" Books");
 
                 }
                 break;
@@ -103,12 +100,13 @@ public class Cli extends AbstractApplication  {
             }
             // save
             case 2:{
-                ret.append("Not implemented yet");
+                BookApi api = new BookApiImp();
+                api.downloadBooks();
                 break;
 
             }
             case 3: {
-                for( String s: avilibaleCommands){
+                for( String s: availableCommands){
                     ret.append(s + "\n");
                 }
                 break;
