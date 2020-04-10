@@ -38,13 +38,13 @@ public class BookApiImp implements BookApi {
     String[] nameparts = parts[1].split("[ \\t\\s]+");
 
     StringBuilder authorBuilder = new StringBuilder();
-    int bookid = 9999;
+    Long bookid = 9999L;
     for (int i = 0; i < nameparts.length - 1; i++) {
       authorBuilder.append(" ").append(nameparts[i].trim());
     }
     try {
       if (nameparts.length > 1) {
-        bookid = Integer.parseInt(nameparts[nameparts.length - 1]);
+        bookid = Long.parseLong(nameparts[nameparts.length - 1]);
       }
     } catch (NumberFormatException ignored) {
     }
@@ -56,7 +56,7 @@ public class BookApiImp implements BookApi {
     return b;
   }
 
-  static String genPathFromId(Integer Id) {
+  static String genPathFromId(Long Id) {
     char[] digits = Id.toString().toCharArray();
     StringBuilder sb = new StringBuilder();
     for (int i = 0; i < digits.length - 1; i++) {
@@ -163,12 +163,12 @@ public class BookApiImp implements BookApi {
             .filter(s -> s.contains(", by "))
             .map(BookApiImp::parseBook)
             .collect(Collectors.toList());
-    books.sort(Comparator.comparingInt(a -> a.Id));
+    books.sort(Comparator.comparingLong(a -> a.Id));
     return books;
   }
 
     @Override
-    public Book getBook(Integer bookid) {
+    public Book getBook(Long bookid) {
       if(books.size() > 0) {
 
           final List<Book> collect = books.stream()

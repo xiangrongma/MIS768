@@ -11,12 +11,12 @@ class BookApiImpTest {
 
   @Test
   void genPathFromId() {
-      assertEquals( "/1/2/3/4/5/123456" , BookApiImp.genPathFromId(123456));
-      assertEquals( "/1/2/3/4/12345"    , BookApiImp.genPathFromId(12345));
-      assertEquals( "/1/2/3/1234"       , BookApiImp.genPathFromId(1234));
-      assertEquals( "/1/2/123"          , BookApiImp.genPathFromId(123));
-      assertEquals( "/1/12"             , BookApiImp.genPathFromId(12));
-      assertEquals( "/1"                , BookApiImp.genPathFromId(1));
+      assertEquals( "/1/2/3/4/5/123456" , BookApiImp.genPathFromId(123456L));
+      assertEquals( "/1/2/3/4/12345"    , BookApiImp.genPathFromId(12345L));
+      assertEquals( "/1/2/3/1234"       , BookApiImp.genPathFromId(1234L));
+      assertEquals( "/1/2/123"          , BookApiImp.genPathFromId(123L));
+      assertEquals( "/1/12"             , BookApiImp.genPathFromId(12L));
+      assertEquals( "/1"                , BookApiImp.genPathFromId(1L));
   }
 
   @Test
@@ -49,7 +49,7 @@ class BookApiImpTest {
         BookApiImp apiImp = new BookApiImp();
         final List<Book> books = apiImp.getBooks();
         assertEquals(books.get(100).title , "The Damnation of Theron Ware");
-        assertEquals(books.get(100).Id , 133);
+        assertEquals(books.get(100).Id , 133L);
 
     }
 
@@ -57,7 +57,7 @@ class BookApiImpTest {
     void getBook() {
         BookApiImp apiImp = new BookApiImp();
         final List<Book> books = apiImp.getBooks();
-        final Book tdtw = apiImp.getBook(133); //== .equals
+        final Book tdtw = apiImp.getBook(133L); //== .equals
         assertEquals(tdtw.title , "The Damnation of Theron Ware");
 
     }
