@@ -16,6 +16,7 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -25,6 +26,7 @@ public class BookApiImp implements BookApi {
   public static final String BASE_URL = "https://www.gutenberg.org/";
   public static final String INDEX_ROOT = BASE_URL + "dirs/GUTINDEX.2020";
   private static final Logger logger = LogManager.getLogger(BookApi.class);
+    private static  List<Book> books = new LinkedList<>();
 
   HttpClient client = new DefaultHttpClient();
   HttpGet request;
@@ -149,8 +151,7 @@ public class BookApiImp implements BookApi {
   public List<Book> getBooks() {
 
     //        String response =  getFileFromUrl(INDEX_ROOT);
-    String content = getFileFromFS("/Users/mark/Projects/MIS768/week4/GUTINDEX.ALL");
-    List<Book> books;
+    String content = getFileFromFS("/Users/mark/Project/JavaClass/week4/GUTINDEX.ALL");
     String header =
         "TITLE and AUTHOR                                                     EBOOK NO.";
     int posStart = content.indexOf(header);
@@ -166,7 +167,21 @@ public class BookApiImp implements BookApi {
     return books;
   }
 
-  @Override
+    @Override
+    public Book getBook(Integer bookid) {
+      if(books.size() > 0) {
+
+          final List<Book> collect = books.stream()
+                  .filter(s -> s.Id.equals(bookid))
+                  .collect(Collectors.toList());
+          System.out.println(collect);
+          return collect.get(0);
+      } else {
+          return null;
+      }
+    }
+
+    @Override
   public List<Author> getAuthors() {
     String response = getFileFromUrl(INDEX_ROOT);
     List<Author> authors = new ArrayList<>();
