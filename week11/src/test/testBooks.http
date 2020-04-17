@@ -11,3 +11,17 @@ GET http://localhost:8080/v1/books/133
 Accept: application/json
 
 ###
+
+GET http://localhost:8080/v2/books
+Accept: application/json
+
+###
+GET http://localhost:8080/v2/books?limit=4&offset=0
+Accept: application/json
+
+###
+###
+GET http://localhost:8080/v2/books/133
+Accept: application/json
+
+###
